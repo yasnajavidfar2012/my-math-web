@@ -1,0 +1,186 @@
+```
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>آزمایشگاه مجموعه‌ها 🧪</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Tahoma,sans-serif;
+  background:#101827;
+  color:white;
+  text-align:center;
+}
+header{
+  padding:35px 15px;
+  background:linear-gradient(135deg,#00bfa6,#4263eb);
+  border-radius:0 0 45px 45px;
+}
+h1{margin:0 0 12px;font-size:30px}
+main{max-width:850px;margin:25px auto;padding:15px}
+.panel{
+  background:#1e293b;
+  padding:22px;
+  margin:18px 0;
+  border-radius:22px;
+  box-shadow:0 5px 20px #0004;
+}
+input,select,button{
+  padding:12px;
+  margin:7px;
+  border:none;
+  border-radius:10px;
+  font-family:inherit;
+}
+input{width:180px}
+button{
+  background:#00d4b1;
+  color:#10202b;
+  font-weight:bold;
+  cursor:pointer;
+}
+button:hover{background:#69f0d5;transform:scale(1.04)}
+.result{
+  color:#69f0d5;
+  font-size:18px;
+  margin-top:15px;
+  line-height:2;
+}
+.bubbles{
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-top:20px;
+}
+.bubble{
+  background:#334155;
+  border:2px solid #00d4b1;
+  border-radius:50%;
+  width:85px;
+  height:85px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:20px;
+}
+footer{padding:20px;color:#aab7cc}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🧪 آزمایشگاه مجموعه‌ها</h1>
+  <p>با چند کلیک، ریاضی را کشف کن!</p>
+</header>
+
+<main>
+
+  <section class="panel">
+    <h2>🔬 ساخت مجموعه</h2>
+    <p>چند عدد وارد کن و مجموعه‌ی خودت را بساز.</p>
+    <input id="numbers" placeholder="مثلاً 2, 4, 6, 8">
+    <button onclick="makeSet()">ساخت مجموعه</button>
+    <div id="setResult" class="result"></div>
+    <div id="bubbles" class="bubbles"></div>
+  </section>
+
+  <section class="panel">
+    <h2>✨ عملیات روی مجموعه‌ها</h2>
+    <p>دو مجموعه بنویس و عملیات دلخواهت را انتخاب کن.</p>
+    <input id="setA" placeholder="مجموعه اول: 1,2,3">
+    <input id="setB" placeholder="مجموعه دوم: 3,4,5">
+    <br>
+    <select id="operation">
+      <option value="union">اجتماع (A ∪ B)</option>
+      <option value="intersection">اشتراک (A ∩ B)</option>
+      <option value="difference">تفاضل (A − B)</option>
+    </select>
+    <button onclick="calculate()">محاسبه کن</button>
+    <div id="operationResult" class="result"></div>
+  </section>
+
+  <section class="panel">
+    <h2>🎯 آزمون کوچولو</h2>
+    <p>اگر A = {1, 2, 3} و B = {3, 4, 5} باشد، اشتراک آن‌ها چیست؟</p>
+    <button onclick="checkAnswer(1)">{1, 2, 3, 4, 5}</button>
+    <button onclick="checkAnswer(2)">{3}</button>
+    <button onclick="checkAnswer(3)">{1, 2}</button>
+    <div id="quizResult" class="result"></div>
+  </section>
+
+</main>
+
+<footer>🌟 یادگیری ریاضی می‌تواند جذاب باشد! 🌟</footer>
+
+<script>
+function getSet(id){
+  const value=document.getElementById(id).value;
+  return [...new Set(value.split(",")
+    .map(x=>x.trim())
+    .filter(x=>x!==""))];
+}
+
+function makeSet(){
+  const values=getSet("numbers");
+  const result=document.getElementById("setResult");
+  const bubbles=document.getElementById("bubbles");
+
+  if(!values.length){
+    result.textContent="اول چند عدد وارد کن!";
+    bubbles.innerHTML="";
+    return;
+  }
+
+  result.textContent="مجموعه‌ی تو: { "+values.join(" ، ")+" }";
+  bubbles.innerHTML=values.map(x=>
+    `<div class="bubble">${x}</div>`
+  ).join("");
+}
+
+function calculate(){
+  const A=getSet("setA");
+  const B=getSet("setB");
+  const op=document.getElementById("operation").value;
+  let answer=[];
+  let title="";
+
+  if(!A.length || !B.length){
+    document.getElementById("operationResult").textContent=
+      "لطفاً هر دو مجموعه را وارد کن!";
+    return;
+  }
+
+  if(op==="union"){
+    answer=[...new Set([...A,...B])];
+    title="اجتماع: همه‌ی اعضای دو مجموعه";
+  }else if(op==="intersection"){
+    answer=A.filter(x=>B.includes(x));
+    title="اشتراک: اعضای مشترک دو مجموعه";
+  }else{
+    answer=A.filter(x=>!B.includes(x));
+    title="تفاضل: اعضای A که در B نیستند";
+  }
+
+  document.getElementById("operationResult").innerHTML=
+    title+"<br>نتیجه: { "+answer.join(" ، ")+" }";
+}
+
+function checkAnswer(choice){
+  const result=document.getElementById("quizResult");
+  if(choice===2){
+    result.textContent="آفرین! 🎉 فقط عدد ۳ در هر دو مجموعه وجود دارد.";
+  }else{
+    result.textContent="دوباره فکر کن! اشتراک یعنی اعضای مشترک دو مجموعه.";
+  }
+}
+</script>
+
+</body>
+</html>
+```
